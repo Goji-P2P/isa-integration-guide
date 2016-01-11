@@ -10,6 +10,13 @@ body
     :markdown
       # Goji Innovative Finance ISA Integration Guide
       
+      ##### v0.1.0 Monday 11th January 2015
+      
+      ## Legal Note
+      
+      This document is the property of Goji Holdings Limited. It may not be reproduced, stored in a retrieval system or transmitted in any form or by any means, either in whole or in part, without prior written permission of Goji Holdings Limited. Goji Holdings Limited is the owner of the intellectual property rights of this document. All such rights are reserved.
+      You may download extracts, of any page(s) from this document for your personal reference. You must not modify the paper or digital copies of this document in any way, and you must not use any illustrations or any graphics separately from any accompanying text.
+      
       ## Table of Contents
       
       * [Introduction](#introduction)
@@ -35,25 +42,27 @@ body
           * [Transfers In](#transfers-in)
           * [Transfers Out](#transfers-out)
           * [Repairing and Voiding ISAs](#repair-void)
+            * [Voiding an ISA](#voiding)
+            * [Repairing an ISA](#repairing)
           * [Death of Investor](#investor-death)
       * [Regulatory Reporting](#reporting)
         
 
       ## <a name="introduction"></a> Introduction
       
-      The Goji Innovative Finance ISA Platform (Goji Platform) provides the admin, regulatory and compliance functionality necessary for a Peer To Peer (P2P) Platform (Originator) to 
+      The Goji Innovative Finance ISA Platform (Goji Platform) provides the admin, regulatory and compliance functionality necessary for a Peer To Peer Platform (Originator) to 
       provide their customers with the ability to wrap their investments in an IF ISA.
       
       The Goji Platform provides a number of key features to deliver the ISA functionality:
 
       * Regulatory reporting to HMRC
-      * Workflow management for ISA admin tasks eg transfering an ISA in/out, death of investor etc.
+      * Workflow management for ISA admin tasks eg transferring an ISA in/out, death of investor etc.
       * Business rule validation on data input
 
       This document details how an Originator integrates with the Goji Platform. 
-      The intended audience of this document are the developers and analysts responsible for building the integration between the Originator's systems and Goji Platform.
+      The intended audience of this document are the developers and analysts responsible for building the integration between the Originator's systems and the Goji Platform.
       
-      The Goji Platform requires data from the Originator at a number of points in the investor lifecycle to facilitate HMRC reporting, process workflow management and data validation. 
+      The Goji Platform requires data from the Originator at a number of points in the Investor lifecycle to facilitate HMRC reporting, process workflow management and data validation. 
       
       Additionally, the Goji platform provides an admin interface to allow Originators to and Goji staff to manage ISA specific workflows eg transfers in/out, 
       repairing/voiding ISAs, death of investor etc.
@@ -62,9 +71,9 @@ body
       
       The Goji Platform exposes a RESTful API over HTTPS. Full details of the API are available in [separate documentation](https://goji-api.herokuapp.com/docs).
       
-      Data will need to be submitted to the Goji platform at the following points in an Investor's lifecycle.
+      Data will need to be submitted to the Goji Platform at the following points in an Investor's lifecycle.
       
-      ### <a name="data-structures"></a> Changes to Originator's systems data structures
+      ### <a name="data-structures"></a> Changes to Originator system's data structures
       
       To successfully integrate with the Goji Platform, the Originator's systems will need to be altered to allow an Investor to have both a 'standard' investment account and an IF ISA account.
       
@@ -155,7 +164,7 @@ body
            
       ##### <a name="create-investment"></a> Creating an investment
       
-      If an Investor can invest their money directly, without going via an auction or queue, the investment should be created directly.
+      If an Investor can invest their money without going via an auction or queue, the investment should be created directly.
       
            POST /investors/{investorId}/investment
       
@@ -198,21 +207,55 @@ body
       
       The Goji Platform Admin Console allows Originator and/or Goji Customer Service Agents (CSA) to perform ISA admin tasks.     
       
-      All activity on the console is fully audited and guarded by an authentication and authorisation model.
+      All activity on the console is fully audited and secured by an authentication and authorisation model.
       
       ### <a name="isa-workflows"></a> ISA Workflows
       
+      The following workflows for ISA management are supported on the Admin Console.
+      
       #### <a name="transfers-in"></a> Transfers In
+      
+      A 'transfer in' is the process where an Investor moves the cash balance of an existing Cash and/or stocks and shares ISA from another ISA Manager to the Originator's platform.
+       
+      An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. 
+      Once the process is complete, Goji will transfer the transferred funds to the Originator and make a call to the Originator platform to indicate the transfer has completed and the funds are cleared.
+        
+      The Originator platform will need to expose a mechanism for being notified that the funds have cleared.
       
       #### <a name="transfers-out"></a> Transfers Out
       
+      A 'transfer-out' is the process where an Investor elects to move their IF ISA from the Originator to an alternative ISA Manager.
+      The new ISA Manager will contact Goji who will perform the checks necessary to validate that the transfer request is genuine.
+      
+      Once this validation has been performed, Goji will instruct the Originator to liquidate the portion of the IF ISA necessary to meet the requirements of the ISA.
+      
+      The Originator platform will need to expose a mechanism to allow an IF ISA to be liquidated and transferred to a designated bank account.  
+      
       #### <a name="repair-void"></a> Repairing / voiding ISAs
+      
+      If HMRC deem that an Investor has breached one/many ISA regulations eg opened two IF ISAs in one tax year, then an ISA may need to be voided or repaired.
+      
+      ##### <a name="voiding"></a> Voiding an ISA
+       
+      A voided ISA is one that is no longer eligible to be tax exempt. Goji will complete the verification, admin and tax submissions required for this process.
+       
+      The Originator platform will need to expose a mechanism to allow an ISA account (cash balance and investments) to be transferred to a 'standard' account.
+      
+      ##### <a name="repairing"></a> Repairing an ISA
+      
+      A repaired ISA is one where a portion of the balance is no longer eligible to be tax exempt. Goji will complete the verification, admin and tax submissions required for this process.
+                                                                                                          
+      The Originator platform will need to expose a mechanism to allow a portion of an ISA account (cash balance and investments) to be transferred to a 'standard' account.
       
       #### <a name="investor-death"></a> Death of Investor
       
+      In the event of a death of an Investor, specific tasks needed to be carried out to process the tax liability of the ISA-wrapped investments.
+      
+      The Goji Admin Console will guide a CSA through this process. 
+      
       ## <a name="reporting"></a> Reporting
       
-      The Goji platform will automatically generate and submit all reporting required by HMRC.
+      The Goji Platform will automatically generate and submit all reporting required by HMRC based on the data provided.
 
 
 
