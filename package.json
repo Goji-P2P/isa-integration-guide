@@ -1,0 +1,8 @@
+{
+  "name": "goji-integration-docs",
+  "version": "1.0.0",
+  "description": "Goji Integration Docs",
+  "dependencies": {
+    "harp": "*"
+  }
+}
