@@ -50,10 +50,10 @@ body
 
       ## <a name="introduction"></a> Introduction
       
-      The Goji Innovative Finance ISA Platform (Goji Platform) provides the administration, regulatory and compliance functionality necessary for a Peer To Peer Platform (Originator) to 
-      offer IF ISAs.
+      The Goji Innovative Finance ISA Platform (Goji Platform) provides the admin, regulatory and compliance functionality necessary for a Peer To Peer Platform (Originator) to 
+      provide their customers with the ability to wrap their investments in an IF ISA.
       
-      The Goji Platform provides a number of key features to support Originators acting as ISA Managers:
+      The Goji Platform provides a number of key features to deliver the ISA functionality:
 
       * Regulatory reporting to HMRC
       * Workflow management for ISA admin tasks eg transferring an ISA in/out, death of investor etc.
@@ -64,12 +64,14 @@ body
       
       The Goji Platform requires data from the Originator at a number of points in the Investor lifecycle to facilitate HMRC reporting, process workflow management and data validation. 
       
-      Additionally, the Goji platform provides an admin interface to allow Originators and Goji staff to manage ISA specific workflows eg transfers in/out, 
+      Additionally, the Goji platform provides an admin interface to allow Originators to and Goji staff to manage ISA specific workflows eg transfers in/out, 
       repairing/voiding ISAs, death of investor etc.
         
       ## <a name="api-integration"></a> API Integration
       
       The Goji Platform exposes a RESTful API over HTTPS. Full details of the API are available in [separate documentation](https://goji-api.herokuapp.com/docs).
+      
+      Data will need to be submitted to the Goji Platform at the following points in an Investor's lifecycle.
       
       ### <a name="data-structures"></a> Changes to Originator system's data structures
       
@@ -77,18 +79,16 @@ body
       
       ### <a name="lifecycle-integration"></a> Investor Lifecycle Integration Points
       
-      Data will need to be submitted to the Goji Platform at the following points in an Investor's lifecycle.
-      
       #### <a name="opening-isa"></a> Opening an ISA
       
-      When a customer on the Originator's platform elects to open an ISA, a call will need to be made to create the Investor on the Goji Platform. 
+      When a customer on the Originator's platform elects to open an ISA, a call will need to be made to the Goji Platform to create the Investor. 
       
            POST /investors
       
       Validation will be performed to ensure that the data provided is a) valid and b) includes the data needed to comply with HMRC reporting. 
       We also validate that the Investor has not already opened an IF ISA on the Goji Platform with another Originator in the current tax year.  
       
-      It is assumed that the Originator has already performed KYC and AML checks by this point.
+      It is assumed that the Originator has already performed KYC and AML check by this point.
       
       Once the Investor has been created on the Goji Platform they need to agree to the ISA declaration and terms and conditions.
       
@@ -102,11 +102,10 @@ body
            
       ##### <a name="cooling-off"></a> Cooling off period
       
-        Once the Investor has been created and the declaration and terms have been signed, the ISA is considered 'provisionally opened'. 
-        It is not fully opened until a deposit is made. Once provisionally opened, 
+        At this point the ISA is considered 'provisionally opened'. It is not fully opened until a deposit is made. Once provisionally opened, 
         a cooling off period is applied during which the Investor can close the ISA free of charge. 
         
-        The current state of the ISA, including when the cooling off period ends, can be checked:
+        The current state of the ISA can be checked:
         
              GET /investors/{investorId}/isa
         
@@ -128,30 +127,26 @@ body
       If an Investor deposits money to their IF ISA account, this needs to be recorded on the Goji Platform:
       
            POST /investors/{investorId}/cash
-           
-      setting the `type` to `CUSTOMER_DEPOSIT`.
       
       ##### <a name="funds-transfer"></a> Transferring funds from an existing account
       
       If an Investor transfers money from an existing investment account on the Originator's platform to their IF ISA, this similarly needs to be recorded as a cash transaction:
       
            POST /investors/{investorId}/cash
-           
-      setting the `type` to `TRANSFER_FROM_OTHER_ACCOUNT`.
       
       ##### <a name="transfers-in-intro"></a> Transfers in
       
-      If an Investor holds an existing cash/stocks and shares ISA with another ISA manager, the Investor can elect to transfer that balance to a different ISA Manager. 
+      If an Investor holds an existing cash/stocks and shares ISA with another ISA manager, the Investor can elect to transfer that balance to another ISA Manager. 
       Please see the section below which details how the Transfers In/Out process works.
       
       #### <a name="investing"></a> Investing
       
-      Once an Investor has funded their account and the cooling off period has expired, they can invest up to the amount of the cash balance on their IF ISA account.
+      Once an Investor has funded their account and the cooling off period has expired, they can invest their money.
       
       ##### <a name="earmarking"></a> Earmarking funds
       
       Earmarking funds is necessary if an Investor has committed an amount of money to an investment but the funds have not been drawn down yet. 
-      This is required if an Investor is bidding on an investment or if they have added their money to a lending queue which will get drawn down when it is matched against an available loan.
+      This is required if an Investor is bidding on an investment or if they have added their money to a lending queue which will get drawn down when it is matched.
       
       Money can be earmarked with the following call:
       
@@ -188,7 +183,6 @@ body
       When a borrower makes a repayment against a loan, this repayment needs to be recorded on the Goji Platform. 
       A reinvestment differs from a repayment in that a reinvestment automatically invests the repaid capital and interest.
       The balance of the ISA is increased by the interest portion of the reinvestment.
-      The cash balance remains unchanged.
       
            POST /investors/{investorId}/investment/{investmentId}/reinvestment
       
@@ -203,8 +197,6 @@ body
       
            POST /investors/{investorId}/cash
       
-      setting the `type` to `CUSTOMER_WITHDRAWAL`.
-      
       #### <a name="edit-investor"></a> Editing investor details
       
       If an Investor's details need to be updated eg they change address, this needs to be reflected on the Goji platform:
@@ -213,7 +205,7 @@ body
       
       ## <a name="admin-console"></a> Admin Console
       
-      The Goji Platform Admin Console allows Originator and/or Goji Customer Service Agents (CSA) to perform ISA administration tasks.     
+      The Goji Platform Admin Console allows Originator and/or Goji Customer Service Agents (CSA) to perform ISA admin tasks.     
       
       All activity on the console is fully audited and secured by an authentication and authorisation model.
       
@@ -225,7 +217,7 @@ body
       
       A 'transfer in' is the process where an Investor moves the cash balance of an existing Cash and/or stocks and shares ISA from another ISA Manager to the Originator's platform.
        
-      An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. A link to this web application can be added to the Originator's platform.
+      An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. 
       Once the process is complete, Goji will transfer the transferred funds to the Originator and make a call to the Originator platform to indicate the transfer has completed and the funds are cleared.
         
       The Originator platform will need to expose a mechanism for being notified that the funds have cleared.
@@ -235,13 +227,13 @@ body
       A 'transfer-out' is the process where an Investor elects to move their IF ISA from the Originator to an alternative ISA Manager.
       The new ISA Manager will contact Goji who will perform the checks necessary to validate that the transfer request is genuine.
       
-      Once this validation has been performed, Goji will instruct the Originator to liquidate the portion of the IF ISA necessary to meet the requirements of the transfer.
+      Once this validation has been performed, Goji will instruct the Originator to liquidate the portion of the IF ISA necessary to meet the requirements of the ISA.
       
       The Originator platform will need to expose a mechanism to allow an IF ISA to be liquidated and transferred to a designated bank account.  
       
       #### <a name="repair-void"></a> Repairing / voiding ISAs
       
-      If HMRC deem that an Investor has breached any ISA regulations eg opened two IF ISAs in one tax year, then an ISA may need to be voided or repaired.
+      If HMRC deem that an Investor has breached one/many ISA regulations eg opened two IF ISAs in one tax year, then an ISA may need to be voided or repaired.
       
       ##### <a name="voiding"></a> Voiding an ISA
        
