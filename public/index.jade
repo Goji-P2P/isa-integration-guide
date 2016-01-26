@@ -229,6 +229,7 @@ body
       Once the process is complete, Goji can either:
 
       1) receive the funds from the 3rd party ISA plan manager and then transfer funds to the Originator and make a call to the Originator platform to indicate the transfer has completed and the funds are cleared. The Originator platform will need to expose a mechanism for being notified that the funds have cleared.
+
       2) inform the 3rd party ISA plan manager of the Originator's bank details and the money can be transferred directly. In this case the Originator would make call to
 
       			POST /investors/{investorId}/cash
@@ -239,17 +240,26 @@ body
       #### <a name="transfers-out"></a> Transfers Out
 
       A 'transfer-out' is the process where an Investor elects to move their IF ISA from the Originator to an alternative ISA Manager.
+
       The new ISA Manager will contact Goji who will perform the checks necessary to validate that the transfer request is genuine.
 
-      Once this validation has been performed, Goji will instruct the Originator to liquidate the portion of the IF ISA necessary to meet the requirements of the transfer. The method of this, and the method for informing Goji once completed, needs to be agreed upon integration. In most cases the loan(s) will just be reclassified into the investor's normal trading account and a call to the following web service made,
+      It is up to the terms and conditions of the agreement between the Originator and the Investor as to whether loan parts can be liquidated to meet the requirements of a transfer out.
+
+      If this is allowed and the Investor has elected to liquidate their loans, Goji will inform the Originator what portion of loans need to be sold on the secondary market. Once this is complete, the Originator will need to make a call to:
+
+          POST /investors/{investorId}/investment/{investmentId}/liquidation
+
+      The method of this, and the method for informing Goji once completed, needs to be agreed upon integration.
+
+      Once there is enough cash in the IF ISA to enable the transfer out to complete, the cash needs to be transferred either directly to the new ISA manager or to Goji who will facilitate the transfer to the new ISA manager.
+
+      Once the cash has been transferred, a call needs to be made to:
 
            POST /investors/{investorId}/cash
 
-      setting the `type` to `INTERNAL_TRANSFER_OUT` passing the value of the loan and any cash component.
+      setting the `type` to `TRANSFER_OUT_VIA_GOJI` or 'TRANSFER_OUT_DIRECT'.
 
-      In some cases the loan(s) will be liquidated and the cash transferred to Goji for subsequent transfer to the new provider or directly to the provider. In this case the same web service call would be made setting the `type` to `EXTERNAL_TRANSFER_OUT_VIA_GOJI` or  `EXTERNAL_TRANSFER_OUT_DIRECT` respectively.
-
-      The Originator platform will need to expose a mechanism to allow an IF ISA to be liquidated and transferred to a designated bank account.
+      The Originator platform will need to expose a mechanism to allow an IF ISA to be transferred to a designated bank account.
 
       #### <a name="repair-void"></a> Repairing / voiding ISAs
 
