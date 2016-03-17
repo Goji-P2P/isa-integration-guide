@@ -10,7 +10,8 @@ body
     :markdown
       # Goji Innovative Finance ISA Integration Guide
 
-      ##### v0.1.0 Monday 11th January 2015
+      ##### v0.1.0 Monday 11th January 2016
+      ##### v0.1.1 Thursday 17th March 2016
 
       ## Legal Note
 
@@ -35,6 +36,7 @@ body
            * [Create Investment](#create-investment)
            * [Repayments](#repayments)
            * [Reinvestments](#reinvestments)
+           * [Sale of Investment](#saleofinvestment)
          * [Withdrawing Funds](#withdrawing-funds)
          * [Edit Investor Details](#edit-investor)
        * [Admin Console](#admin-console)
@@ -192,6 +194,14 @@ body
 
            POST /investors/{investorId}/investment/{investmentId}/reinvestment
 
+      #### <a name="saleofinvestment"></a> Sale of investment
+
+      When an investor sells an investment this is recorded on the Goji Platform by making a repayment equal to the remaining capital balance on the investment.
+
+          POST /investors/{investorId}/investment/{investmentId}/repayment
+
+      Setting the `capitalAmount` to the amount of the sale and the `interestAmount` to zero (assuming there is no interest element to the sale).
+
       #### <a name="withdrawing-funds"></a> Withdrawing funds
 
       An Investor can withdraw funds up to the cash balance available on the ISA.
@@ -232,9 +242,9 @@ body
 
       2) inform the 3rd party ISA plan manager of the Originator's bank details and the money can be transferred directly. In this case the Originator would make call to
 
-      			POST /investors/{investorId}/cash
+      			POST /investors/{investorId}/transferIn/cash
 
-      setting the `type` to `TRANSFER_IN`
+      specifying the `currentYearSubscription` , `priorYearSubscriptions` and `repairedAmount` . These amounts can be determined based on the values Goji will provide upon receiving the transfer history form frm the prior ISA manager.
 
 
       #### <a name="transfers-out"></a> Transfers Out
