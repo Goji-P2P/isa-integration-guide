@@ -48,6 +48,7 @@ body
              * [Repairing an ISA](#repairing)
            * [Death of Investor](#investor-death)
        * [Regulatory Reporting](#reporting)
+       * [Integrating the Transfer In Pages](#transfer-in-integration)
 
 
       ## <a name="introduction"></a> Introduction
@@ -234,7 +235,7 @@ body
 
       A 'transfer in' is the process where an Investor moves the cash balance of an existing Cash and/or stocks and shares ISA from another ISA Manager to the Originator's platform.
 
-      An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. A link to this web application can be added to the Originator's platform. This will be a secure hand-off using OAuth.
+      An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. A link to this web application can be added to the Originator's platform. Please see the <a href="#transfer-in-integration">section below for details</a> on how to integrate the web application.
 
       Once the process is complete, Goji can either:
 
@@ -244,8 +245,11 @@ body
 
       			POST /investors/{investorId}/transferIn/cash
 
-      specifying the `currentYearSubscription` , `priorYearSubscriptions` and `repairedAmount` . These amounts can be determined based on the values Goji will provide upon receiving the transfer history form frm the prior ISA manager.
+      specifying the `currentYearSubscription` , `priorYearSubscriptions` and `repairedAmount` . These amounts can be determined based on the values Goji will provide upon receiving the transfer history form from the prior ISA manager. These values can be retrieved from the Goji Admin Console.
 
+      The `repairedAmount` refers to any part of the transferred amount that cannot be applied to the current year ISA as it would breach the subscription allowance. This portion should be credited to the Investor's standard investment account. The amount that was repaired needs to be recorded in the API call to Goji to ensure a complete record of where the money has been applied is created.
+
+      Goji will email the Originator once the Transfer History Form has been received from the previous ISA Manager. This form includes the details of how the transferred amount should be split between current and prior year subscriptions. The Originator must not process the deposit of the transferred funds until these details have been received.
 
       #### <a name="transfers-out"></a> Transfers Out
 
@@ -302,6 +306,89 @@ body
       ## <a name="reporting"></a> Reporting
 
       The Goji Platform will automatically generate and submit all reporting required by HMRC based on the data provided.
+
+      ## <a name="transfer-in-integration"></a> Integrating the Transfer In pages
+
+      The Goji Transfer In application exposes an ISA transfer in form intended for an investor to complete.
+
+      It supports ISA transfers of the following types:
+
+      - Cash
+      - Stocks and Shares
+      - Innovative Finance
+
+      ### Embedding
+
+      The Goji Transfer In application is an Ember Addon. As a result you can use it as such or there are a number of alternatives.
+      For each possible way of embedding the application, you will need to first obtain a one time security token.
+
+      #### Obtaining the _uiData_ and the security token
+
+      To obtain the application's asset URLs, make an authenticated request to the following URL:
+
+         `https://api.gojip2p.net/investors/<investorId>/transferIn/uiData`
+
+         The response will be structured like so:
+
+         _(Please note that you should never hard-code the URLs returned since they are subject to change)_
+
+                     {
+                       "hostedUrl": "https://api.gojip2p.net/transferIn?token=<oneTimeToken>&investorId=<investorId>",
+                       "styleSrc": "https://goji-assets-domain/transfer-in/assets/goji-transfer-in-123456.css",
+                       "scriptSrc": "https://goji-assets-domain/transfer-in/assets/goji-transfer-in-123456.js",
+                       "investorId": "<investorId>",
+                       "token": "<oneTimeToken>"
+                     }
+
+         With this data you are then able to bootstrap the application using any of the methods outlined below.
+
+        If your front-end application uses Ember, using as an Ember Addon makes sense. Alternatively, the suggested approach would be to
+        embed as a standalone JavaScript component on your existing pages - this enables full control over the application's styling.
+
+      #### Using as an Ember Addon
+
+      To install the addon in your Ember project:
+
+          ember install goji-transfer-in
+
+      You can then use the `goji-transfer-in` component like so in your template files:
+
+          {{goji-transfer-in investorId="<uiData.investorId>" token="<uiData.token>"}}
+
+      #### Using as a Standalone JavaScript Component
+
+      To include the application in your existing page as a JavaScript component, you will need to do the following:
+
+      1. In the body of your HTML include the following:
+
+                 <div id="goji-application">
+                   <div data-component="goji-transfer-in"
+                        data-attrs='{ "investorId": "<uiData.investorId>", "token": "<uiData.token>" }'>
+                   </div>
+                 </div>
+
+      1. Extract the JavaScript asset's URL from the request above and include it in your page.
+
+         __Please note: The inclusion of the script import must be made after inclusion of the HTML in the previous step.__
+
+         e.g `<script src="{{uiData.scriptSrc}}"></script>`
+
+         Optionally do the same for the CSS file if you wish to have a basic layout.
+
+         e.g `<link rel="stylesheet" href="{{uiData.styleSrc}}">`
+
+      3. The component will then render when the document's body has fully loaded.
+
+      #### Example HTML
+
+      At a minimum, your HTML will look something like the [example.html](docs/example.html) below:
+
+      ![example.html](example-html.png)
+
+      #### Using the Hosted Page
+
+      The above response _uiData_ object includes a `hostedUrl` property which serves the transfer in form with some basic styling.
+      This can be used as a link to the standalone transfers in page.
 
 
 
