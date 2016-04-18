@@ -317,14 +317,14 @@ body
       - Stocks and Shares
       - Innovative Finance
 
-      ### Embedding
+      ## Embedding
 
-      The Goji Transfer In application is an Ember Addon. As a result you can use it as such or there are a number of alternatives.
-      For each possible way of embedding the application, you will need to first obtain a one time security token.
+      The Goji Transfer In application is a JavaScript component which can be integrated in a number of ways.
+      For each possible way of integrating with the application, you will need to first obtain a one time security token.
 
       #### Obtaining the _uiData_ and the security token
 
-      To obtain the application's asset URLs, make an authenticated request to the following URL:
+      To obtain the application's asset URLs one time security token, make an authenticated request to the following URL:
 
          `https://api.gojip2p.net/investors/<investorId>/transferIn/uiData`
 
@@ -333,6 +333,7 @@ body
          _(Please note that you should never hard-code the URLs returned since they are subject to change)_
 
                      {
+                       "apiUrl": "https://api.gojip2p.net",
                        "hostedUrl": "https://api.gojip2p.net/transferIn?token=<oneTimeToken>&investorId=<investorId>",
                        "styleSrc": "https://goji-assets-domain/transfer-in/assets/goji-transfer-in-123456.css",
                        "scriptSrc": "https://goji-assets-domain/transfer-in/assets/goji-transfer-in-123456.js",
@@ -345,17 +346,16 @@ body
         If your front-end application uses Ember, using as an Ember Addon makes sense. Alternatively, the suggested approach would be to
         embed as a standalone JavaScript component on your existing pages - this enables full control over the application's styling.
 
-      #### Using as an Ember Addon
+      #### Application Arguments
 
-      To install the addon in your Ember project:
+      Four arguments are required for the application to function fully, these are described below:
 
-          ember install goji-transfer-in
+      - `apiUrl`: [Specified in the _uiData_ response] The API URL the front-end application should use when interacting with the Goji service
+      - `investorId`: [Specified in the _uiData_ response] The ID of the active investor
+      - `token`: [Specified in the _uiData_ response] The security token used to authenticate the active investor's requests
+      - `accountUrl`: The URL used when an investor chooses to return to their account page having successfully completed a transfer in request
 
-      You can then use the `goji-transfer-in` component like so in your template files:
-
-          {{goji-transfer-in investorId="<uiData.investorId>" token="<uiData.token>"}}
-
-      #### Using as a Standalone JavaScript Component
+      ### Using as a Standalone JavaScript Component
 
       To include the application in your existing page as a JavaScript component, you will need to do the following:
 
@@ -363,7 +363,8 @@ body
 
                  <div id="goji-application">
                    <div data-component="goji-transfer-in"
-                        data-attrs='{ "investorId": "<uiData.investorId>", "token": "<uiData.token>" }'>
+                        data-attrs='{ "apiUrl": "<uiData.apiUrl>", "accountUrl": "<platform-manage-account-url>",
+                                      "investorId": "<uiData.investorId>", "token": "<uiData.token>" }'>
                    </div>
                  </div>
 
@@ -383,9 +384,9 @@ body
 
       At a minimum, your HTML will look something like the [example.html](docs/example.html) below:
 
-      ![example.html](example-html.png)
+      ![example.html](docs/example-html.png)
 
-      #### Using the Hosted Page
+      ### Using the Hosted Page
 
       The above response _uiData_ object includes a `hostedUrl` property which serves the transfer in form with some basic styling.
       This can be used as a link to the standalone transfers in page.
