@@ -243,7 +243,7 @@ body
 
       2) inform the 3rd party ISA plan manager of the Originator's bank details and the money can be transferred directly. In this case the Originator would make call to
 
-      			POST /investors/{investorId}/transferIn/cash
+      			POST /investors/{investorId}/transferIn/{transferInId}/cash
 
       specifying the `transferAmount` and `repairedAmount` . These amounts can be determined based on the values Goji will provide upon receiving the transfer history form from the prior ISA manager. These values can be retrieved from the Goji Admin Console. The `transferAmount` is the toal amount received from the previous ISA manager. The `repairedAmount` is any amount from this total that had to be transferred to a standard investment account to prevent the current year subscription amount from being exceeded.
 
