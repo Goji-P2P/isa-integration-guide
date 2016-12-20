@@ -54,14 +54,14 @@ body
 
       ## <a name="introduction"></a> Introduction
 
-      The Goji Innovative Finance ISA Platform (Goji Platform) provides the administration, regulatory and compliance functionality to enable to Goji team to efficiently handle all back-office aspects of the Innovative Finance ISA on behalf of a P2P Platform and provide best-of-class 2nd level customer support.
+      The Goji Innovative Finance ISA Platform (Goji Platform) provides the administration, regulatory and compliance functionality to enable the Goji team to efficiently handle all back-office aspects of the Innovative Finance ISA on behalf of a P2P Platform and provide best-of-class 2nd level customer support.
 
       The Goji Platform provides a number of key features to enable efficient IF ISA administration:
 
       * Regulatory reporting to HMRC
-      * Workflow management for ISA admin tasks eg transferring an ISA in/out, void&repair, death of investor etc.
+      * Workflow management for ISA admin tasks eg transferring an ISA in/out, void & repair, death of investor etc.
       * Business rule validation on data input (e.g. check ISA limits, NI number checking)
-      * Customer support instant messaging, ticketing and originator FAQ
+      * Customer support instant messaging, ticketing and originator FAQs
       * Management information and insights into types of customers enabling improved customer marketing
 
       This document details how an Originator integrates with the Goji Platform.
@@ -81,7 +81,7 @@ body
 
       #### <a name="opening-isa"></a> Opening an ISA
 
-      When a customer on the Originators platform elects to open an ISA, the investor first needs to be shown an ISA declaration and the current set of terms and conditions. The latest version of the declaration and terms and conditions can be retrieved by calling:
+      When a customer on the Originator's platform elects to open an ISA, the investor first needs to be shown an ISA declaration and the current set of terms and conditions. The latest version of the declaration and terms and conditions can be retrieved by calling:
 
           GET /declaration
 
@@ -93,7 +93,7 @@ body
 
           POST /declaration
 
-      A token is returned by these endpoints which needs to be included in the following calling to create the Investor.
+      A token is returned by these endpoints which needs to be included in the following call to create the Investor.
 
       Once these documents have been agreed to, the Investor can be created on the Goji Platform by calling:
 
@@ -108,11 +108,15 @@ body
       ##### <a name="cooling-off"></a> Cooling off period
 
       Once the declaration and terms have been signed and the Investor details have been recorded, the ISA is considered 'provisionally opened'.
-      It is not fully opened until a deposit is made. Some platforms may wish to apply a cooling-off period for an investor before they can invest. This is configurable on the Goji platform for an Originator.
+      It is not fully opened until a deposit is made. Some platforms may wish to apply a cooling-off period for an investor before they can invest. This is configurable on the Goji platform for an Originator. Please inform Goji if you wish to apply a cooling off period. This will block investments until the cooling off period has ended but still allow deposits.
 
       The current state of the ISA, including when the cooling off period ends, can be checked:
 
            GET /investors/{investorId}/isa
+
+      Summary data for the ISA can be retrieved using:
+
+           GET /investors/{investorId}/isa/summary
 
       #### <a name="funding-isa"></a> Funding an ISA
 
@@ -141,7 +145,7 @@ body
 
            POST /investors/{investorId}/cash
 
-      setting the `type` to `TRANSFER_FROM_OTHER_ACCOUNT`.
+      setting the `type` to `CUSTOMER_DEPOSIT`.
 
       ##### <a name="transfers-in-intro"></a> Transfers in
 
@@ -196,6 +200,8 @@ body
 
            POST /investors/{investorId}/investment/{investmentId}/reinvestment
 
+      Alternatively, this can be achieved with two separate calls to record the repayment and the subsequent investment.
+
       #### <a name="saleofinvestment"></a> Sale of investment
 
       When an investor sells an investment this is recorded on the Goji Platform by making a repayment equal to the remaining capital balance on the investment.
@@ -238,11 +244,7 @@ body
 
       An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. A link to this web application can be added to the Originator's platform. Please see the <a href="#transfer-in-integration">section below for details</a> on how to integrate the web application.
 
-      Once the process is complete, Goji can either:
-
-      1) receive the funds from the 3rd party ISA plan manager and then transfer funds to the Originator and make a call to the Originator platform to indicate the transfer has completed and the funds are cleared. The Originator platform will need to expose a mechanism for being notified that the funds have cleared.
-
-      2) inform the 3rd party ISA plan manager of the Originator's bank details and the money can be transferred directly. In this case the Originator would make call to
+      Once the process is complete, Goji will inform the 3rd party ISA plan manager of the Originator's bank details and the money will be transferred directly. In this case the Originator would make call to
 
       			POST /investors/{investorId}/transferIn/{transferInId}/cash
 
@@ -260,11 +262,7 @@ body
 
       It is up to the terms and conditions of the agreement between the Originator and the Investor as to whether loan parts can be liquidated to meet the requirements of a transfer out.
 
-      If this is allowed and the Investor has elected to liquidate their loans, Goji will inform the Originator what portion of loans need to be sold on the secondary market. Once this is complete, the Originator will need to make a call to:
-
-          POST /investors/{investorId}/investment/{investmentId}/liquidation
-
-      The method of this, and the method for informing Goji once completed, needs to be agreed upon integration.
+      If this is allowed and the Investor has elected to liquidate their loans, Goji will inform the Originator what portion of loans need to be sold on the secondary market.
 
       Once there is enough cash in the IF ISA to enable the transfer out to complete, the cash needs to be transferred either directly to the new ISA manager or to Goji who will facilitate the transfer to the new ISA manager.
 
@@ -272,9 +270,9 @@ body
 
            POST /investors/{investorId}/cash
 
-      setting the `type` to `TRANSFER_OUT_VIA_GOJI` or `TRANSFER_OUT_DIRECT`.
+      setting the `type` to `TRANSFER_OUT`.
 
-      The Originator platform will need to expose a mechanism to allow an IF ISA cash balance to be transferred to a designated bank account.
+      The Originator platform will need to expose a mechanism to allow an IF ISA cash balance to be transferred to a designated bank account different to the bank account held by the investor.
 
       #### <a name="repair-void"></a> Repairing / voiding ISAs
 
@@ -290,19 +288,19 @@ body
 
       A repaired ISA is one where a portion of the balance is no longer eligible to be tax exempt. Goji will complete the verification, admin and tax submissions required for this process.
 
-      The Originator platform will need to expose a mechanism to allow a portion of an ISA account (cash balance and investments) to be either transferred to a 'standard' account (preferable) or for part ot the investments to be liquidated and the required cash returned to the investor.
+      The Originator platform will need to expose a mechanism to allow a portion of an ISA account (cash balance and investments) to be either transferred to a 'standard' account (preferable) or for part of the investments to be liquidated and the required cash returned to the investor.
 
       #### <a name="investor-death"></a> Death of Investor
 
       In the event of a death of an Investor, specific tasks needed to be carried out to process the tax liability of the ISA-wrapped investments.
 
-      When you receive the death certificate, log onto the admin console, find the investor and click Special Events then Inform of Death. You will be prompted to upload the death certificate and will then be shown a valuation of that ISA which should be sent to the executor. Do the same when you receive the Grant of Probate or Grant of Letters of Administration. The executor then has 3 choices:
+      When you receive the death certificate, log onto the admin console, find the investor and click Actions > Create Workflow and then Death of Investor. You will be prompted to upload the death certificate and will then be shown a valuation of that ISA which should be sent to the executor. Do the same when you receive the Grant of Probate or Grant of Letters of Administration. The executor then has 3 choices:
 
-      1) If the executor changes the account into his/her name change the appopriate name & address on your systems. This should automatically call the PUT /investors/{investorId} as shown above. Note the ISA wrapper is still not present for this.
+      1) If the executor changes the account into his/her name change the appropriate name & address on your systems. This should also call the PUT /investors/{investorId} as shown above.
 
-      2) If the ISA is to be transferred to the spouse then the spouse must create an ISA account on the P2P site. The P2P CSA should then logon to the admin console where there will be an option to transfer the ISA to another user. This process will require second level authorisation. At this point Goji will put the ISA wrapper back on. Once this is complete the P2P CSA will be informed and any underlying loans in the ISA must be novated to the spouse.
+      2) If the ISA is to be transferred to the spouse then the spouse must create an ISA account on the P2P site. The P2P CSA should then inform Goji to transfer the tax wrapper to the spouse's account. Once this is complete the P2P CSA will be informed and any underlying loans in the ISA must be novated to the spouse.
 
-      3) If executor sells loans then it is the normal process for a sale.
+      3) If the executor sells the loans then it is the normal process for a sale.
 
       ## <a name="reporting"></a> Reporting
 
@@ -563,24 +561,3 @@ body
       | INVALID_SUBSCRIPTION | Subscription not allowed as investor is no longer eligible |
       | ISA_SUBSCRIPTION_EXCEEDED | This transaction exceeds the current remaining subscription amount %s |
       | CASH_BALANCE_EXCEEDED | This transaction exceeds the current cash balance |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
