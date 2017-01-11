@@ -13,6 +13,7 @@ body
       ##### v0.1.0 Monday 11th January 2016
       ##### v0.1.1 Thursday 17th March 2016
       ##### v0.1.2 Tuesday 20th December 2016
+      ##### v0.1.3 Wednesday 11th January 2017
 
       ## Legal Note
 
@@ -38,6 +39,7 @@ body
            * [Repayments](#repayments)
            * [Reinvestments](#reinvestments)
            * [Sale of Investment](#saleofinvestment)
+           * [Defaults and Write-Offs](#writeOffs)
          * [Withdrawing Funds](#withdrawing-funds)
          * [Edit Investor Details](#edit-investor)
        * [Admin Console](#admin-console)
@@ -212,6 +214,18 @@ body
           POST /investors/{investorId}/investment/{investmentId}/repayment
 
       Setting the `capitalAmount` to the amount of the sale and the `interestAmount` to zero (assuming there is no interest element to the sale).
+
+      If a loan has been sold for more or less than the capital outstanding amount (eg in an auction), then there is a specific endpoint that can be called:
+
+           POST /investors/{investorId}/investment/{investmentId}/sale
+
+      ##### <a name="writeOffs"></a> Defaults and write offs
+
+      If a loan has defaulted and either all or a portion of the loan should be written off, the write off endpoint can be called. This will reduce the ISA balance by the write off amount.
+
+           POST /investors/{investorId}/investment/{investmentId}/writeOff
+
+      If repayments need to be made after the full balance has been written off (eg recoveries), these should be processed as interest repayments.
 
       #### <a name="withdrawing-funds"></a> Withdrawing funds
 
