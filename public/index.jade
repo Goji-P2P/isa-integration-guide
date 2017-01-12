@@ -427,12 +427,8 @@ body
 
       The following details are concatenated together:
 
-          HTTP method + \n
           nonce + \n
-          timestamp + \n
-          URL path  + \n
-          md5 of request body + \n (only include if there is a request body)
-          query parameters in alphabetical order + \n
+          timestamp
 
       The string is then encrypted using `SHA256` using the private key.
 
@@ -451,50 +447,10 @@ body
 
       The signature string would be as follows:
 
-          GET
           67681625-d7f9-43e3-859a-25e634c203c2
           1474982268271
-          /user/session/valid
 
-      Assuming a secret key of `abcd1234`, this will produce a signature equal to: `YFyAegY29DxvbfKcj7PxId6WheI+ZyouPdqhmYLiyWM=` which is then URL encoded to `YFyAegY29DxvbfKcj7PxId6WheI%2BZyouPdqhmYLiyWM%3D`
-
-      #### GET request with query parameters
-      `GET https://api.gojip2p.com/user/session/valid?query1=value2&a&a&b=3&query1=value1&query2`
-
-      With a nonce = 5e1df77c-7269-4606-b632-b9c0c9baee37
-
-      and timestamp = 1474982446064
-
-      The signature string would be as follows:
-
-          GET
-          5e1df77c-7269-4606-b632-b9c0c9baee37
-          1474982446064
-          /user/session/valid
-          a&b=3&query1=value1&query1=value2&query2
-
-      Assuming a secret key of `abcd1234`, this will produce a signature equal to: `uMHjUQ8FJXbXMEuPLCvNH3yfYDS0C9VUuemsr17DxOg=` which is then URL encoded to `uMHjUQ8FJXbXMEuPLCvNH3yfYDS0C9VUuemsr17DxOg%3D`
-
-      #### POST request with a body
-      `POST /user/session/valid?query1=value2&a&a&b=3&query1=value1&query2`
-
-      With a body  = `post body`
-
-      and a nonce = 5a0e3e06-e55d-46dc-93d2-45190470a5f8
-
-      and timestamp = 1474988894711
-
-      The signature string would be as follows:
-
-          POST
-          5a0e3e06-e55d-46dc-93d2-45190470a5f8
-          1474988894711
-          /user/session/valid
-
-          a&b=3&query1=value1&query1=value2&query2
-
-      Assuming a secret key of `abcd1234`, this will produce a signature equal to: `rI9tU9VH7yzr2+VfbRWyGYImidUdX+tBuY+49NqAKxU=` which is then URL encoded to `rI9tU9VH7yzr2%2BVfbRWyGYImidUdX%2BtBuY%2B49NqAKxU%3D`
-
+      Assuming a secret key of `abcd1234`, this will produce a signature equal to: `q0AdIAm6SphhgN/VxjMiE9UEd3uZRca9gjJXQ5+dyNI=` which is then URL encoded to `q0AdIAm6SphhgN%2FVxjMiE9UEd3uZRca9gjJXQ5%2BdyNI%3D`
 
       ## <a name="api-error-codes"></a> API Error Codes
 
