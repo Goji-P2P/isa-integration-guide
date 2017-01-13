@@ -261,7 +261,11 @@ body
 
       An Investor-facing web application will guide the Investor through the steps necessary to facilitate this process. A link to this web application can be added to the Originator's platform. Please see the <a href="#transfer-in-integration">section below for details</a> on how to integrate the web application.
 
-      Once the process is complete, Goji will inform the 3rd party ISA plan manager of the Originator's bank details and the money will be transferred directly. In this case the Originator would make call to
+      Once the process is complete, a workflow will be created and Goji will inform the 3rd party ISA plan manager of the Originator's bank details and the money will be transferred directly.
+
+      Once the 3rd party ISA manager have sent Goji the details of the ISA being transferred, Goji will email the Originator to inform them to expect a transfer in.
+
+      Once the transfer in funds have been received, the Originator would make call to
 
       			POST /investors/{investorId}/transferIn/{transferInId}/cash
 
