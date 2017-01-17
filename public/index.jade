@@ -532,9 +532,14 @@ body
       | INVALID_DATA | DateTime of repayment must not be in the future |
       | INVALID_DATA | Cannot provide repayment with zero capital and interest amount |
       | CAPITAL_AMOUNT_EXCEEDED | This reinvestment exceeds the remaining capital on the investment |
-      | EARMARKED_AMOUNT_EXCEEDED | This transaction exceeds the current balance on the earmarked amount |
-      | EARMARKED_AMOUNT_EXCEEDED | Cannot delete more than earmarked balance |
+      | BALANCE_NOT_AVAILABLE | This transaction exceeds the current balance on the earmarked amount |
+      | BALANCE_NOT_AVAILABLE | Cannot delete more than earmarked balance |
       | INVALID_INVESTMENT | Investment not allowed as investor is no longer eligible |
       | INVALID_SUBSCRIPTION | Subscription not allowed as investor is no longer eligible |
-      | ISA_SUBSCRIPTION_EXCEEDED | This transaction exceeds the current remaining subscription amount %s |
+      | EXCEEDS_ANNUAL_SUBSCRIPTION | This transaction exceeds the current remaining subscription amount %s |
       | CASH_BALANCE_EXCEEDED | This transaction exceeds the current cash balance |
+      | INVALID_DATA | The date of the repayment cannot be before the investment date |
+      | CAPITAL_AMOUNT_EXCEEDED | The date of the repayment cannot be before the investment date |
+      | INVALID_DATA | The clientTransactionId must be provided |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
