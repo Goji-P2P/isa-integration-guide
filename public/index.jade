@@ -543,6 +543,9 @@ body
       | INVALID_DATA | The clientTransactionId must be provided |
       | INVALID_DATA | The clientTransactionId=%s has already been used |
       | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+      | INVALID_DATA | transferAmount must be defined |
+      | INVALID_DATA | repairAmount must be defined |
+      | INVALID_DATA | The amounts submitted don't match the transfer history. Please resubmit with the correct amounts |
 
       ## <a name="api-error-codes-sign-terms"></a> Sign Terms Error Codes
 
@@ -557,3 +560,200 @@ body
       |:---------|:---------|
       | DATE_TIME_IN_FUTURE | dateTimeSigned cannot be in the future |
       | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-create-investor"></a> Create Investor Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | address.country cannot be null or empty |
+      | INVALID_DATA | address.lineOne cannot be null or empty |
+      | INVALID_DATA | address.postcode cannot be null or empty |
+      | INVALID_DATA | address.postcode must be in valid UK format. e.g. (A9 9ZZ &#124; A99 9ZZ &#124; AB9 9ZZ &#124; AB99 9ZZ &#124; A9C 9ZZ &#124; AD9E 9ZZ) |
+      | INVALID_DATA | address.townCity cannot be null or empty |
+      | INVALID_DATA | clientId cannot be null or empty |
+      | INVALID_DATA | dateOfBirth cannot be null or empty and must be in valid ISO format (YYYY-MM-DD) |
+      | INVALID_DATA | declarationToken cannot be null or empty |
+      | INVALID_DATA | emailAddress cannot be null or empty |
+      | INVALID_DATA | emailAddress must be in valid format |
+      | INVALID_DATA | firstName cannot be null or empty |
+      | INVALID_DATA | lastName cannot be null or empty |
+      | INVALID_DATA | nationalInsuranceNumber is in invalid format. Must be in NI number format e.g. (AB123456C) |
+      | INVALID_DATA | nationalInsuranceNumber cannot be null or empty |
+      | INVALID_DATA | termsAndConditionsToken cannot be null or empty |
+      | UNDER_18 | Cannot create IF-ISA account for person under the age of 18 |
+      | CLIENT_ID_TAKEN | This clientId has already been taken by another investor |
+      | INVALID_DATA | The declarationToken supplied does not exist |
+      | INVALID_DATA | The declarationToken supplied already been used by another investor |
+      | TOKEN_EXPIRED | The declarationToken supplied was signed over 1 hour ago |
+      | INVALID_NAME | First and last names must be longer than one character |
+      | INVESTOR_ISA_EXISTS | Investor with this N.I number already has an IF-ISA account with this originator |
+      | TAX_YEAR_ISA_EXISTS | Investor with this N.I number has previously created an IF-ISA within this tax year |
+      | FAILS_RESIDENCY | address.postcode cannot be one from any of the Crown Dependencies (Guernsey GY, Jersey JE, Isle of Man IM) |
+      | INVALID_ADDRESS | Address cannot be a PO Box |
+      | INVALID_DATA | The termsAndConditionsToken supplied does not exist for this originator |
+      | INVALID_DATA | The termsAndConditionsToken supplied already been used by another investor |
+      | TOKEN_EXPIRED | The termsAndConditionsToken supplied was signed over 1 hour ago |
+      | INVALID_COUNTRY | Country is invalid |
+
+      ## <a name="api-error-codes-validate-investor"></a> Validate Investor Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | address.country cannot be null or empty |
+      | INVALID_DATA | address.lineOne cannot be null or empty |
+      | INVALID_DATA | address.postcode cannot be null or empty |
+      | INVALID_DATA | address.postcode must be in valid UK format. e.g. (A9 9ZZ &#124; A99 9ZZ &#124; AB9 9ZZ &#124; AB99 9ZZ &#124; A9C 9ZZ &#124; AD9E 9ZZ) |
+      | INVALID_DATA | address.townCity cannot be null or empty |
+      | INVALID_DATA | clientId cannot be null or empty |
+      | INVALID_DATA | dateOfBirth cannot be null or empty and must be in valid ISO format (YYYY-MM-DD) |
+      | INVALID_DATA | declarationToken cannot be null or empty |
+      | INVALID_DATA | emailAddress cannot be null or empty |
+      | INVALID_DATA | emailAddress must be in valid format |
+      | INVALID_DATA | firstName cannot be null or empty |
+      | INVALID_DATA | lastName cannot be null or empty |
+      | INVALID_DATA | nationalInsuranceNumber is in invalid format. Must be in NI number format e.g. (AB123456C) |
+      | INVALID_DATA | nationalInsuranceNumber cannot be null or empty |
+      | UNDER_18 | Cannot create IF-ISA account for person under the age of 18 |
+      | CLIENT_ID_TAKEN | This clientId has already been taken by another investor |
+      | INVALID_NAME | First and last names must be longer than one character |
+      | INVESTOR_ISA_EXISTS | Investor with this N.I number already has an IF-ISA account with this originator |
+      | TAX_YEAR_ISA_EXISTS | Investor with this N.I number has previously created an IF-ISA within this tax year |
+      | FAILS_RESIDENCY | address.postcode cannot be one from any of the Crown Dependencies (Guernsey GY, Jersey JE, Isle of Man IM) |
+      | INVALID_ADDRESS | Address cannot be a PO Box |
+      | INVALID_COUNTRY | Country is invalid |
+
+      ## <a name="api-error-codes-create-investment"></a> Create Investment Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | Amount must be greater than zero. |
+      | INVALID_DATA | Amount cannot be zero |
+      | INVALID_DATA | Amount is greater than Earmarked Amount. |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | Amount must be in GBP |
+      | INVALID_DATA | ClientInvestmentId must be specified |
+      | INVALID_DATA | InvestmentType must be specified |
+      | INVALID_DATA | OriginalAmount must be specified |
+      | INVALID_DATA | OriginalAmount must be greater than zero |
+      | INVALID_DATA | OriginalAmount must be in GBP |
+      | INVALID_DATA | DateTimeOfInvestment must be specified |
+      | INVALID_DATA | DateTimeOfInvestment must not be in the future |
+      | INVALID_DATA | TermOfInvestment must be greater than zero |
+      | INVALID_INVESTMENT | Investment not allowed as investor is no longer eligible |
+      | CASH_BALANCE_EXCEEDED | This transaction exceeds the current cash balance |
+      | INVALID_DATA | The clientTransactionId must be provided |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-create-repayment"></a> Create Repayment Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | Amount must be greater than zero. |
+      | INVALID_DATA | Amount cannot be zero |
+      | INVALID_DATA | ClientReinvestmentId must be specified |
+      | INVALID_DATA | Capital amount must be provided |
+      | INVALID_DATA | Interest amount must be provided |
+      | INVALID_DATA | Capital amount must be non negative |
+      | INVALID_DATA | Interest amount must be non negative |
+      | INVALID_DATA | Client repayment ID must be provided |
+      | INVALID_DATA | DateTime of repayment must be provided |
+      | INVALID_DATA | DateTime of repayment must not be in the future |
+      | INVALID_DATA | Cannot provide repayment with zero capital and interest amount |
+      | INVALID_DATA | The date of the repayment cannot be before the investment date |
+      | CAPITAL_AMOUNT_EXCEEDED | The date of the repayment cannot be before the investment date |
+      | INVALID_DATA | The clientTransactionId must be provided |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-create-reinvestment"></a> Create Reinvestment Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | Amount must be greater than zero. |
+      | INVALID_DATA | Amount cannot be zero |
+      | INVALID_DATA | Amount is greater than Earmarked Amount. |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | Amount must be in GBP |
+      | INVALID_DATA | Date of Earmark cannot be in the future |
+      | INVALID_DATA | ClientInvestmentId must be specified |
+      | INVALID_DATA | InvestmentType must be specified |
+      | INVALID_DATA | OriginalAmount must be specified |
+      | INVALID_DATA | OriginalAmount must be greater than zero |
+      | INVALID_DATA | OriginalAmount must be in GBP |
+      | INVALID_DATA | DateTimeOfInvestment must be specified |
+      | INVALID_DATA | DateTimeOfInvestment must not be in the future |
+      | INVALID_DATA | TermOfInvestment must be greater than zero |
+      | INVALID_DATA | ClientReinvestmentId must be specified |
+      | INVALID_DATA | Capital amount must be provided |
+      | INVALID_DATA | Interest amount must be provided |
+      | INVALID_DATA | DateTimeOfReinvestment must be provided |
+      | INVALID_DATA | At least one new investment must be provided |
+      | INVALID_DATA | Capital amount must be non negative |
+      | INVALID_DATA | Interest amount must be non negative |
+      | INVALID_DATA | DateTimeOfReinvestment cannot be in the future |
+      | INVALID_DATA | Client repayment ID must be provided |
+      | INVALID_DATA | DateTime of repayment must be provided |
+      | INVALID_DATA | DateTime of repayment must not be in the future |
+      | INVALID_DATA | Cannot provide repayment with zero capital and interest amount |
+      | CAPITAL_AMOUNT_EXCEEDED | This reinvestment exceeds the remaining capital on the investment |
+      | INVALID_INVESTMENT | Investment not allowed as investor is no longer eligible |
+      | INVALID_DATA | The date of the repayment cannot be before the investment date |
+      | INVALID_DATA | The clientTransactionId must be provided |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-cash-transaction"></a> Cash Transaction Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | Amount cannot be zero |
+      | INVALID_DATA | Amount must be in GBP |
+      | INVALID_SUBSCRIPTION | Subscription not allowed as investor is no longer eligible |
+      | EXCEEDS_ANNUAL_SUBSCRIPTION | This transaction exceeds the current remaining subscription amount %s |
+      | CASH_BALANCE_EXCEEDED | This transaction exceeds the current cash balance |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-earmarked-amount"></a> Earmarked Amount Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | Amount must be greater than zero. |
+      | INVALID_DATA | Amount cannot be zero |
+      | INVALID_DATA | ClientEarmarkedAmountId must be specified |
+      | INVALID_DATA | Amount must be in GBP |
+      | INVALID_DATA | Date of Earmark cannot be in the future |
+      | INVALID_DATA | ClientInvestmentId must be specified |
+      | CASH_BALANCE_EXCEEDED | This transaction exceeds the current cash balance |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-invest-earmarked-amount"></a> Invest Earmarked Amount Error Codes
+
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | Amount must be greater than zero. |
+      | INVALID_DATA | Amount cannot be zero |
+      | INVALID_DATA | Amount is greater than Earmarked Amount. |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | ClientEarmarkedAmountId must be specified |
+      | INVALID_DATA | Amount must be in GBP |
+      | INVALID_DATA | ClientInvestmentId must be specified |
+      | INVALID_DATA | InvestmentType must be specified |
+      | INVALID_DATA | OriginalAmount must be specified |
+      | INVALID_DATA | OriginalAmount must be greater than zero |
+      | INVALID_DATA | OriginalAmount must be in GBP |
+      | INVALID_DATA | DateTimeOfInvestment must be specified |
+      | INVALID_DATA | DateTimeOfInvestment must not be in the future |
+      | INVALID_DATA | TermOfInvestment must be greater than zero |
+      | BALANCE_NOT_AVAILABLE | This transaction exceeds the current balance on the earmarked amount |
+      | INVALID_INVESTMENT | Investment not allowed as investor is no longer eligible |
+      | INVALID_DATA | The clientTransactionId must be provided |
+      | INVALID_DATA | The clientTransactionId=%s has already been used |
+      | INVALID_DATA | Cannot parse date. Please ensure it is in the correct format eg 2015-01-01T09:00:00Z |
+
+      ## <a name="api-error-codes-transfer-cash"></a> Transfer Cash Error Codes
+      
+      |Error Code | Message|
+      |:---------|:---------|
+      | INVALID_DATA | transferAmount must be defined |
+      | INVALID_DATA | repairAmount must be defined |
+      | INVALID_DATA | The amounts submitted don't match the transfer history. Please resubmit with the correct amounts |
