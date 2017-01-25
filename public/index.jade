@@ -14,6 +14,7 @@ body
       ##### v0.1.1 Thursday 17th March 2016
       ##### v0.1.2 Tuesday 20th December 2016
       ##### v0.1.3 Wednesday 11th January 2017
+      ##### v0.1.4 Wednesday 25th January 2017
 
       ## Legal Note
 
@@ -269,7 +270,7 @@ body
 
       			POST /investors/{investorId}/transferIn/{transferInId}/cash
 
-      specifying the `transferAmount` and `repairedAmount` . These amounts can be determined based on the values Goji will provide upon receiving the transfer history form from the prior ISA manager. These values can be retrieved from the Goji Admin Console. The `transferAmount` is the total amount received from the previous ISA manager. The `repairedAmount` is any amount from this total that had to be transferred to a standard investment account to prevent the current year subscription amount from being exceeded.
+      specifying the `transferAmount` and either the `repairedAmount` or `subscribedAmount`. These amounts can be determined based on the values Goji will provide upon receiving the transfer history form from the prior ISA manager. These values can be retrieved from the Goji Admin Console. The `transferAmount` is the total amount received from the previous ISA manager. The `repairedAmount` is any amount from this total that had to be transferred to a standard investment account to prevent the current year subscription amount from being exceeded. The `subscribedAmount` is the amount that is credited to the ISA account. If no funds have to be repaired, the `subscribedAmount` would equal the `transferAmount`.
 
       The `repairedAmount` refers to any part of the transferred amount that cannot be applied to the current year ISA as it would breach the subscription allowance. This portion should be credited to the Investor's standard investment account. The amount that was repaired needs to be recorded in the API call to Goji to ensure a complete record of where the money has been applied is created.
 
