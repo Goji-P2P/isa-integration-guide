@@ -23,6 +23,7 @@ body
          * [Lifecycle Integration Points](#lifecycle-integration)
            * [Opening an ISA](#opening-isa)
            * [Cooling Off Period](#cooling-off)
+           * [Cancelling and/or closing an ISA](#closing)
          * [Funding an ISA](#funding-isa)
            * [Validation](#funding-validation)
            * [Cash Deposits](#cash-deposits)
@@ -115,6 +116,20 @@ body
       Summary data for the ISA can be retrieved using:
 
            GET /investors/{investorId}/isa/summary
+
+      ##### <a name="closing"></a> Cancelling and/or closing an ISA
+
+      An investor can cancel their ISA at any point up to the end of the cooling off period. To cancel their ISA they either need to remove all the cash from the account and/or remove any investments from the tax wrapper. To do this, you can either:
+
+       * Remove all cash and then call `/cash` to reflect this in the Goji platform (setting `type` to `CUSTOMER_WITHDRAWAL`).
+       * Sell the investments and then withdraw the cash.
+       * Move the investments in specie out of the wrapper and call `DELETE /investors/{investorId}/investment/{investmentId}` to reflect this in the Goji platform.
+
+      Once the balance in the ISA is zero, the account can be closed by creating a 'Close ISA' workflow in the Goji admin console. This will prevent any further subscriptions being made.
+
+      An investor can close their ISA account at any point by reducing the balance to zero and then requesting their account to be closed.
+
+      Whether the account is closed/cancelled within the cooling off period determines how this is reported to HMRC.
 
       #### <a name="funding-isa"></a> Funding an ISA
 
@@ -280,13 +295,11 @@ body
 
       If this is allowed and the Investor has elected to liquidate their loans, Goji will inform the Originator what portion of loans need to be sold on the secondary market.
 
-      Once there is enough cash in the IF ISA to enable the transfer out to complete, the cash needs to be transferred either directly to the new ISA manager or to Goji who will facilitate the transfer to the new ISA manager.
+      Once there is enough cash in the IF ISA to enable the transfer out to complete, the cash needs to be transferred either directly to the new ISA manager. The bank co-ordinates for the new ISA manager will be available in the Goji admin console.
 
       Once the cash has been transferred, a call needs to be made to:
 
-           POST /investors/{investorId}/cash
-
-      setting the `type` to `TRANSFER_OUT`.
+           POST /transferOut/:transferOutId/cash
 
       The Originator platform will need to expose a mechanism to allow an IF ISA cash balance to be transferred to a designated bank account different to the bank account held by the investor.
 
@@ -294,17 +307,35 @@ body
 
       If HMRC deem that an Investor has breached any ISA regulations eg opened two IF ISAs in one tax year, then an ISA may need to be voided or repaired.
 
+      Voiding an ISA involves closing the ISA completely. A repair requires a certain amount of funds and associated income to be removed from the wrapper.
+
       ##### <a name="voiding"></a> Voiding an ISA
 
-      A voided ISA is one that is no longer eligible to be tax exempt. Goji will complete the verification, admin and tax submissions required for this process.
+      If an investor has opened multiple IF ISAs within a tax year, HMRC may instruct their ISA manager(s) to void the ISA.
 
-      The Originator platform will need to expose a mechanism to allow an ISA account (cash balance and investments) to be either transferred to a 'standard' account (preferable) or for the investments to be liquidated and the cash returned to the investor.
+      Goji will handle all the associated admin wth voiding the ISA, however the Originator will need to be able to support moving funds and/or investments out of the wrapper.
+
+      The steps to repair the ISA will be as follows:
+
+       * HMRC write to the ISA manager to instruct them to void the ISA
+       * Goji/Originator will contact the investor to determine how the funds should be removed from the wrapper eg withdrawing cash, selling investments, moving in specie
+       * Any cash on account is withdrawn using `/cash` with type set to `CUSTOMER_WITHDRAWAL`
+       * If investments are to be removed from the tax wrapper, call `DELETE /investors/{investorId}/investment/{investmentId}/investment`. This reduces the ISA balance by the outstanding capital amount.
+       * Once this process is complete, Goji will email the investor with details of the taxable income that needs to be declared in their tax return.
 
       ##### <a name="repairing"></a> Repairing an ISA
 
-      A repaired ISA is one where a portion of the balance is no longer eligible to be tax exempt. Goji will complete the verification, admin and tax submissions required for this process.
+      If an investor has oversubscribed to their ISA(s) within a tax year, HMRC may instruct their ISA manager(s) to repair the ISA. HMRC will contact the ISA manager with the amount that needs to be removed from the ISA.
 
-      The Originator platform will need to expose a mechanism to allow a portion of an ISA account (cash balance and investments) to be either transferred to a 'standard' account (preferable) or for part of the investments to be liquidated and the required cash returned to the investor.
+      Goji will handle all the associated admin wth repairing the ISA, however the Originator will need to be able to support moving funds and/or investments out of the wrapper.
+
+      The steps to repair the ISA will be as follows:
+
+       * HMRC write to the ISA manager to instruct them to repair the ISA
+       * Goji/Originator will contact the investor to determine how the funds should be removed from the wrapper eg withdrawing cash, selling investments, moving in specie
+       * Any cash on account is withdrawn using `/cash` with type set to `CUSTOMER_WITHDRAWAL`
+       * If investments are to be removed from the tax wrapper, call `DELETE /investors/{investorId}/investment/{investmentId}/investment`. This reduces the ISA balance by the outstanding capital amount.
+       * Once this process is complete, Goji will email the investor with details of the taxable income that needs to be declared in their tax return.
 
       #### <a name="investor-death"></a> Death of Investor
 
