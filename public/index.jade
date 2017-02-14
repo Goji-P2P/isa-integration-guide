@@ -542,7 +542,7 @@ body
         public String hashSignature(String signatureToHash, String apiSecret) {
           try {
               Mac sha256HMAC = Mac.getInstance("HmacSHA256");
-              Se cretKeySpec secretKey = new SecretKeySpec(apiSecret.getBytes("UTF-8"), "HmacSHA256");
+              SecretKeySpec secretKey = new SecretKeySpec(apiSecret.getBytes("UTF-8"), "HmacSHA256");
               sha256HMAC.init(secretKey);
               return Base64.encodeBase64String(sha256HMAC.doFinal(signatureToHash.getBytes()));
           } catch (Exception e) {
