@@ -341,13 +341,67 @@ body
 
       In the event of a death of an Investor, specific tasks needed to be carried out to process the tax liability of the ISA-wrapped investments.
 
-      When you receive the death certificate, log onto the admin console, find the investor and click Actions > Create Workflow and then Death of Investor. You will be prompted to upload the death certificate and will then be shown a valuation of that ISA which should be sent to the executor. Do the same when you receive the Grant of Probate or Grant of Letters of Administration. The executor then has 3 choices:
+      Any surviving spouse inherits the tax wrapper of the investor's ISA. The spouse can then invest within this tax wrapper. This is know as an Additional Permitted Subscription.
 
-      1) If the executor changes the account into his/her name change the appropriate name & address on your systems. This should also call the PUT /investors/{investorId} as shown above.
+      The Death of Investor flow may follow one of the following paths:
 
-      2) If the ISA is to be transferred to the spouse then the spouse must create an ISA account on the P2P site. The P2P CSA should then inform Goji to transfer the tax wrapper to the spouse's account. Once this is complete the P2P CSA will be informed and any underlying loans in the ISA must be novated to the spouse.
+      1) Balance removed from account
 
-      3) If the executor sells the loans then it is the normal process for a sale.
+      In this case, the account is transferred to the executor of the estate and all funds are withdrawn.
+
+      The process flow is:
+
+      * Create ‘Death of Investor’ workflow.
+      * Enter Executor’s details as attachment to workflow.
+      * Platform changes account’s name to Executor and calls `PUT /investors/{investorId}` to update details.
+      * Create ISA valuation in workflow. This is needed to know the value of the ISA at the point of death. Any income received after this date is liable for tax.
+      * Platform sells all investments and records repayments via API.
+      * Cash is withdrawn and recorded via API.
+      * Workflow is closed once balance is zero.
+
+      2) Balance transferred to spouse's account on the platform via an APS
+
+      In this case, the investor's ISA tax wrapper is transferred to the spouse's account on the same platform.
+
+      The process flow is:
+
+      * Create ‘Death of Investor’ workflow.
+      * Enter Executor’s details as attachment to workflow.
+      * Platform changes account’s name to Executor and calls `PUT /investors/{investorId}` to update details.
+      * Create ISA valuation in workflow.
+      * Spouse’s ISA account is created.
+      * Create APS workflow for spouse.
+      * Attach signed copy of APS declaration.
+      * Enter APS amount in workflow (this is taken from the ISA valuation on the deceased investor’s account).
+      * If there is cash on account, withdraw this from the deceased investor and record using the API.
+      * Deposit the cash to the spouse’s ISA account and record via the API using `/cash` setting the cash transaction type to `ADDITIONAL_PERMITTED_SUBSCRIPTION`.
+      * If investments should be novated to the spouse, remove them from the deceased investor’s account and record using `DELETE /investment/{investmentId}`.
+      * Add the investment to the spouse’s ISA by first entering a deposit with type `ADDITIONAL_PERMITTED_SUBSCRIPTION` for the value of the investment and then recording the new investment using `POST /investment`.
+      * Workflow can be closed.
+
+      3) Inputting APS from another platform
+
+      In this case, the surviving spouse has an APS that they want to use on the platform.
+
+      The process flow is:
+
+      * Create the ISA for the spouse.
+      * Create APS workflow for spouse.
+      * Attach signed copy of APS declaration.
+      * Enter APS amount in workflow (this is taken from the ISA valuation on the deceased investor’s account received from the previous ISA manager).
+      * Deposit the cash to the spouse’s ISA account and record via the API using `/cash` setting the cash transaction type to `ADDITIONAL_PERMITTED_SUBSCRIPTION`. HMRC require the investor to identify which subscriptions they are making within an APS.
+
+      4) Transferring APS to another platform
+
+      In this case, the surviving spouse wishes to use the APS with another ISA manager.
+
+      The process flow is:
+
+      * Create ‘Death of Investor’ workflow.
+      * Enter Executor’s details as attachment to workflow.
+      * Platform changes account’s name to Executor and calls `PUT /investor/{investorId}` to update details.
+      * Create ISA valuation in workflow.
+      * Goji will complete an APS transfer form to the new ISA manager detailing the value of the APS.
 
       ## <a name="reporting"></a> Reporting
 
@@ -460,7 +514,7 @@ body
           nonce + \n
           timestamp
 
-      The string is then encrypted using `SHA256` using the private key.
+      The string is then encrypted using `HMAC-SHA256` using the private key.
 
       The result is then Base64 encoded to produce a string.
 
@@ -481,6 +535,21 @@ body
           1474982268271
 
       Assuming a secret key of `abcd1234`, this will produce a signature equal to: `q0AdIAm6SphhgN/VxjMiE9UEd3uZRca9gjJXQ5+dyNI=` which is then URL encoded to `q0AdIAm6SphhgN%2FVxjMiE9UEd3uZRca9gjJXQ5%2BdyNI%3D`
+
+      An example in Java is as follows:
+
+      ````
+        public String hashSignature(String signatureToHash, String apiSecret) {
+          try {
+              Mac sha256HMAC = Mac.getInstance("HmacSHA256");
+              Se cretKeySpec secretKey = new SecretKeySpec(apiSecret.getBytes("UTF-8"), "HmacSHA256");
+              sha256HMAC.init(secretKey);
+              return Base64.encodeBase64String(sha256HMAC.doFinal(signatureToHash.getBytes()));
+          } catch (Exception e) {
+              throw new RuntimeException(e);
+          }
+        }
+      ````
 
       ## <a name="api-error-codes"></a> API Error Codes
 
