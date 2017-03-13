@@ -337,7 +337,7 @@
 
       To obtain the application's asset URLs one time security token, make an authenticated request to the following URL:
 
-         `https://api.gojip2p.net/investors/<investorId>/transferIn/uiData`
+         `https://api.gojip2p.net/investors/<investorId>/transferIn/uiData?version=<version>`
 
          The response will be structured like so:
 
@@ -356,6 +356,14 @@
 
         If your front-end application uses Ember, using as an Ember Addon makes sense. Alternatively, the suggested approach would be to
         embed as a standalone JavaScript component on your existing pages - this enables full control over the application's styling.
+        
+        
+      ##### Version of application
+  
+      A suitable value for the _uiData_'s __version__ query parameter will be supplied to you at integration stage. 
+      The response's static asset URLs will be of the specified version which enables control of when a new version of the transfer in form is used.
+      
+      If you wish to upgrade the version of the form at any point, Goji can provide release notes and the latest version you may wish to use.  
 
       #### Application Arguments
 
